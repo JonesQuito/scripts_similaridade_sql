@@ -154,5 +154,23 @@ CREATE OR REPLACE FUNCTION enableSimilarity(TEXT, TEXT) RETURNS text AS $$
       return tdfName;
    END;
 $$ LANGUAGE plpgsql;
+--############################################
+
+
+
+--############################################
+CREATE OR REPLACE FUNCTION field_primary_key(TEXT) 
+RETURNS TABLE (nome name, tipo text) AS $$
+	DECLARE
+   	tableName ALIAS FOR $1; 
+   BEGIN
+   	RETURN QUERY SELECT a.attname, format_type(a.atttypid, a.atttypmod) AS data_type
+              FROM pg_index i JOIN   pg_attribute a ON a.attrelid = i.indrelid
+              AND a.attnum = ANY(i.indkey)
+              WHERE i.indrelid =  tableName::regclass AND i.indisprimary; 
+      return;
+   END;
+$$ LANGUAGE 'plpgsql';
+--############################################
 
 
